@@ -37,9 +37,9 @@ ui <- fluidPage(theme = shinytheme("slate"),
                   
                   column(3, h4('2nd STEP - Extract Posts'),
                          
-                         numericInput('page_id', 'Selected Page ID',29534858696),
+                         selectInput('page_id', 'Selected Page ID',29534858696),
                          numericInput('nposts', 'Number of posts to retrieve', 100),
-                         dateInput('since', 'Retrieve posts since', value = '2016/02/24', format = 'yyyy/mm/dd'),
+                         dateInput('since', 'Since when? (Have in mind Facebook released reaction buttons on 2016/02/24)', value = '2016/02/24', format = 'yyyy/mm/dd'),
                          actionButton(inputId = "retrieve", label = "Retrieve Facebook Data"),
                          downloadButton('downloadData2', 'Download')),
                   
@@ -65,7 +65,7 @@ ui <- fluidPage(theme = shinytheme("slate"),
 
 server<-function(input, output, session) {
   
-  token <-'xxx' # enter your own token here
+  token <-'431098017231964|RcbxQoCWfsjuycYXVwd3WXM6Sas' # enter your own token here
   
   values <- reactiveValues(df_data = NULL, df_chart = NULL)
   
@@ -81,6 +81,14 @@ server<-function(input, output, session) {
     filename = function() { paste(input$page, '.csv', sep='') },
     content = function(file) {
       write.csv(values$df_pages, file)
+    })
+  
+  observe({
+  updateSelectInput(session, "page_id",
+                    label = "Selected Page ID",
+                      choices = values$df_pages[,c('id')],
+                    selected = head(values$df_pages[,c('id')], 1)
+                    )
     })
   
   observeEvent(input$retrieve, {
