@@ -8,7 +8,7 @@ library(plotly)
 library(scales)
 
 # Change this with your Facebook API token
-token <-'xxx'
+token <-'xxxx'
 
 ui <- fluidPage(theme = shinytheme("slate"),
                 
