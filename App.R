@@ -67,15 +67,6 @@ ui <- fluidPage(theme = shinytheme("slate"),
 
 server<-function(input, output, session) {
   
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  token <-'XXXX' # enter your own token here
-=======
-  token <-'431098017231964|RcbxQoCWfsjuycYXVwd3WXM6Sas' # enter your own token here
->>>>>>> 0644c0ec9aef5007ab2f6c872e0589faf317f377
-  
->>>>>>> adaba859b843e387737380261e5258f26c062adf
   values <- reactiveValues(df_data = NULL, df_chart = NULL)
   
   observeEvent(input$gopages, {
