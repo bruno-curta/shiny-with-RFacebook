@@ -65,7 +65,7 @@ ui <- fluidPage(theme = shinytheme("slate"),
 
 server<-function(input, output, session) {
   
-  token <-'XXXX' # enter your own token here
+  token <-'431098017231964|RcbxQoCWfsjuycYXVwd3WXM6Sas' # enter your own token here
   
   values <- reactiveValues(df_data = NULL, df_chart = NULL)
   
