@@ -1,12 +1,14 @@
-require(shiny)
-require(shinythemes)
-require(data.table)
-require(Rfacebook)
-require(ggplot2)
-require(ggthemes)
-require(plotly)
-require(scales)
+library(shiny)
+library(shinythemes)
+library(data.table)
+library(Rfacebook)
+library(ggplot2)
+library(ggthemes)
+library(plotly)
+library(scales)
 
+# Change this with your Facebook API token
+token <-'431098017231964|RcbxQoCWfsjuycYXVwd3WXM6Sas'
 
 ui <- fluidPage(theme = shinytheme("slate"),
                 
@@ -30,14 +32,14 @@ ui <- fluidPage(theme = shinytheme("slate"),
                   
                   column(3, h4('1st STEP - Define the Page'),
                          
-                         textInput('page','Insert the name of the page you want to find', 'Ex: The Simpsons'),
+                         textInput('page','Insert the name of the page you want to find', 'Simpsons'),
                          numericInput('npages', 'Number of pages to retrieve', 5),
                          actionButton(inputId = "gopages", label = "Get Pages"),
                          downloadButton('downloadData1', 'Download')),
                   
                   column(3, h4('2nd STEP - Extract Posts'),
                          
-                         selectInput('page_id', 'Selected Page ID',29534858696),
+                         selectInput('page_id', 'Select the page', 'Simpsons'),
                          numericInput('nposts', 'Number of posts to retrieve', 100),
                          dateInput('since', 'Since when? (Have in mind Facebook released reaction buttons on 2016/02/24)', value = '2016/02/24', format = 'yyyy/mm/dd'),
                          actionButton(inputId = "retrieve", label = "Retrieve Facebook Data"),
@@ -65,8 +67,6 @@ ui <- fluidPage(theme = shinytheme("slate"),
 
 server<-function(input, output, session) {
   
-  token <-'431098017231964|RcbxQoCWfsjuycYXVwd3WXM6Sas' # enter your own token here
-  
   values <- reactiveValues(df_data = NULL, df_chart = NULL)
   
   observeEvent(input$gopages, {
@@ -85,14 +85,14 @@ server<-function(input, output, session) {
   
   observe({
   updateSelectInput(session, "page_id",
-                    label = "Selected Page ID",
-                      choices = values$df_pages[,c('id')],
-                    selected = head(values$df_pages[,c('id')], 1)
+                    label = "Select the page",
+                      choices = values$df_pages[,c('name')],
+                    selected = head(values$df_pages[,c('name')], 1)
                     )
     })
   
   observeEvent(input$retrieve, {
-    values$df_data <- getPage(input$page_id, token = token, n=input$nposts, reactions = T, since = input$since)
+    values$df_data <- getPage(values$df_pages[which(values$df_pages$name==input$page_id),c('id')], token = token, n=input$nposts, reactions = T, since = input$since)
     
     values$df_data$message_clean<-sapply(values$df_data$message,function(row) iconv(row, "latin1", "ASCII", sub=""))
     values$df_data$date<-as.POSIXct(values$df_data$created_time, format = "%Y-%m-%dT%H:%M:%S+0000", tz = "GMT")
